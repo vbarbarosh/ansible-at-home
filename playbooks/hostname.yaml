@@ -1,0 +1,24 @@
+---
+- hosts: all
+  tasks:
+
+  - name: hostname • update /etc/hosts
+    become: true
+    blockinfile:
+      path: /etc/hosts
+      create: yes
+      block: |
+        {% for item in groups.all  %}
+        {{ "{:<17} {}".format(hostvars[item].ip4, item) }}
+        {% endfor %}
+
+  - name: hostname • update /etc/hostname
+    become: true
+    copy:
+      dest: /etc/hostname
+      content: |
+        {{ inventory_hostname }}
+
+  - name: hostname • update hostname
+    hostname:
+      name: '{{ inventory_hostname }}'

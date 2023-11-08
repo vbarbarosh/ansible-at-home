@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  heartbeat:
+    image: ubuntu:latest
+    restart: always
+    command: bash -c 'while true; do echo $$(date +"%Y/%m/%d %T") hostname=$$(cat /host/hostname) random=$$RANDOM; sleep 1s; done'
+    volumes:
+      - /etc/hostname:/host/hostname:ro
+    logging:
+      driver: loki
+      options:
+        loki-url: http://home.grafana:3100/loki/api/v1/push
+        loki-batch-size: '400'
+        loki-external-labels: 'job=docker,container_name={{.Name}},vb_service=infra.heartbeat'

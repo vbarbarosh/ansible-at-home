@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: true
+  handlers:
+    - name: global handlers
+      import_tasks: ../handlers/restart-sshd.yaml
+  tasks:
+
+  - name: ssh • disable remote root login
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: '^#?PermitRootLogin' 
+      line: 'PermitRootLogin no'
+    notify: restart-sshd
+    when: false
+
+  - name: ssh • disable empty password login
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: '^(#\s*)?PermitEmptyPasswords '
+      line: 'PermitEmptyPasswords no'
+    notify: restart-sshd
+
+  - name: ssh • disable password login
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: '^(#\s*)?PasswordAuthentication '
+      line: 'PasswordAuthentication no'
+    notify: restart-sshd

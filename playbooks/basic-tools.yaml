@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Install basic packages
+    apt:
+      name:
+        - g++
+        - make
+        - tree
+        - htop
+        - curl
+        - wget
+        - man
+        - vim
+        - awscli
+        - pciutils
+        - net-tools
+        - ethtool
+        - silversearcher-ag
+        - pv
+        - parallel
+      state: latest

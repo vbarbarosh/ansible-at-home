@@ -1,0 +1,13 @@
+---
+- hosts: all
+  tasks:
+
+  - name: infra.heartbeat • copy files
+    copy:
+      src: ../files/infra.heartbeat
+      dest: .
+
+  - name: infra.heartbeat • spin up docker service
+    docker_compose:
+      project_src: infra.heartbeat
+      state: present

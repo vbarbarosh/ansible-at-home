@@ -1,0 +1,36 @@
+---
+# https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw
+# > Uncomplicated Firewall (ufw) is a frontend that ships with Debian and
+# > Ubuntu, and it lets you manage firewall rules. Docker and ufw use iptables
+# > in ways that make them incompatible with each other.
+# >
+# > When you publish a container's ports using Docker, traffic to and from that
+# > container gets diverted before it goes through the ufw firewall settings.
+# > Docker routes container traffic in the nat table, which means that packets
+# > are diverted before it reaches the INPUT and OUTPUT chains that ufw uses.
+# > Packets are routed before the firewall rules can be applied, effectively
+# > ignoring your firewall configuration.
+- hosts: all
+  become: true
+  tasks:
+
+  - name: ufw • install latest
+    apt:
+      name: ufw
+      state: latest
+      update_cache: true
+
+  - name: ufw • limit ssh
+    ufw:
+      rule: limit
+      port: ssh
+      proto: tcp
+
+  - name: ufw • enable logging
+    ufw:
+      logging: 'on'
+
+  - name: ufw • enable and deny by default
+    ufw:
+      state: enabled
+      policy: deny

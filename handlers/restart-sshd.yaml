@@ -1,0 +1,8 @@
+---
+- name: restart-sshd
+  become: true
+  command: 'service ssh restart'
+# https://stackoverflow.com/a/30349016
+#  service:
+#    name: ssh
+#    state: restarted

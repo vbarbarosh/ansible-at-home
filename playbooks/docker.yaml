@@ -1,0 +1,55 @@
+---
+# https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04
+- hosts: all
+  become: true
+  tasks:
+    # https://stackoverflow.com/questions/58169348/how-is-the-architecture-fact-called-in-ansible
+    - name: docker • set dpkg architecture
+      set_fact:
+        deb_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
+    - name: docker • Install Docker dependencies
+      apt:
+        name:
+          - curl
+          - ca-certificates
+          - apt-transport-https
+          - software-properties-common
+          - gpg-agent
+        state: latest
+        update_cache: true
+
+    - name: docker • add docker gpg apt key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+
+    - name: docker • add docker repository
+      apt_repository:
+        repo: "deb [arch={{ deb_architecture }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: docker • update apt and install docker-ce
+      apt:
+        name:
+          - docker-ce
+          - docker-compose
+        state: latest
+        update_cache: true
+
+    - name: docker • install loki docker plugin
+      community.docker.docker_plugin:
+        plugin_name: grafana/loki-docker-driver:2.9.1
+        alias: loki
+        state: enable
+
+    - name: 'docker • add user `{{ ansible_env.SUDO_USER }}` to group `docker`'
+      user:
+        name: '{{ ansible_env.SUDO_USER }}'
+        groups: docker
+        append: true
+
+    - name: docker • spin up docker daemon
+      service:
+        name: docker
+        state: started

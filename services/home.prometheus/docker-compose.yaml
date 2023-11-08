@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      loki:
+        ipv4_address: 172.100.0.12
+#    logging:
+#      driver: loki
+#      options:
+#        loki-url: http://home.grafana:3100/loki/api/v1/push
+#        loki-batch-size: '400'
+#        loki-external-labels: 'job=docker,container_name={{.Name}},service=home.prometheus'
+
+networks:
+  loki:
+    external: true

@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    network_mode: host
+    volumes:
+      - '/:/host:ro,rslave'
+    logging:
+      driver: loki
+      options:
+        loki-url: http://home.grafana:3100/loki/api/v1/push
+        loki-batch-size: '400'
+        loki-external-labels: 'job=docker,container_name={{.Name}},service=infra.node-exporter'
