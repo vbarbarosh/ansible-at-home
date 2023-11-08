@@ -20,5 +20,6 @@
         {{ inventory_hostname }}
 
   - name: hostname • update hostname
+    become: true
     hostname:
       name: '{{ inventory_hostname }}'
