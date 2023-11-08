@@ -2,15 +2,11 @@
 - hosts: all
   tasks:
 
-  - name: infra.node-exporter • copy files/infra.node-exporter/
+  - name: infra.node-exporter • copy files
     copy:
-      src: ../files/infra.node-exporter
+      src: ../services/infra.node-exporter
       dest: .
-
-  - name: infra.node-exporter • spin up docker service
-    docker_compose:
-      project_src: infra.node-exporter
-      state: present
+    notify: restart-node-exporter
 
   - name: infra.node-exporter • ufw • open port 9100 
     become: true
@@ -19,3 +15,16 @@
       port: 9100
       from: '{{ hostvars["home.grafana"].ip4 }}'
       comment: home.grafana
+
+  handlers:
+  - name: infra.node-exporter • docker-compose stop
+    docker_compose:
+      project_src: infra.node-exporter
+      stopped: true
+      state: present
+    listen: restart-node-exporter
+  - name: infra.node-exporter • docker-compose up
+    docker_compose:
+      project_src: infra.node-exporter
+      state: present
+    listen: restart-node-exporter

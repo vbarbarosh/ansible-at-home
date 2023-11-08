@@ -4,6 +4,8 @@
 - import_playbook: ufw.yaml
 - import_playbook: basic-tools.yaml
 - import_playbook: docker.yaml
+- import_playbook: home.grafana.yaml
+- import_playbook: home.prometheus.yaml
 - import_playbook: infra.promtail.yaml
 - import_playbook: infra.node-exporter.yaml
 - import_playbook: infra.heartbeat.yaml

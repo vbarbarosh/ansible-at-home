@@ -1,0 +1,28 @@
+---
+- hosts: home.grafana
+  tasks:
+
+  - name: home.grafana • create loki network
+    docker_network:
+      name: loki
+      ipam_config:
+        - subnet: 172.100.0.0/24
+
+  - name: home.grafana • copy files
+    copy:
+      src: ../services/home.grafana
+      dest: .
+    notify: restart-grafana
+
+  handlers:
+  - name: home.grafana • docker-compose stop
+    docker_compose:
+      project_src: home.grafana
+      stopped: true
+      state: present
+    listen: restart-grafana
+  - name: home.grafana • docker-compose up
+    docker_compose:
+      project_src: home.grafana
+      state: present
+    listen: restart-grafana

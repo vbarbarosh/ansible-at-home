@@ -4,10 +4,19 @@
 
   - name: infra.heartbeat • copy files
     copy:
-      src: ../files/infra.heartbeat
+      src: ../services/infra.heartbeat
       dest: .
+    notify: restart-heartbeat
 
-  - name: infra.heartbeat • spin up docker service
+  handlers:
+  - name: infra.heartbeat • docker-compose stop
+    docker_compose:
+      project_src: infra.heartbeat
+      stopped: true
+      state: present
+    listen: restart-heartbeat
+  - name: infra.heartbeat • docker-compose up
     docker_compose:
       project_src: infra.heartbeat
       state: present
+    listen: restart-heartbeat

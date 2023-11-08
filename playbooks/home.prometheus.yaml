@@ -1,0 +1,28 @@
+---
+- hosts: home.grafana
+  tasks:
+
+  - name: home.prometheus • copy files
+    copy:
+      src: ../services/home.prometheus
+      dest: .
+    notify: restart-prometheus
+
+  - name: home.prometheus • expand .jinja2 files
+    template:
+      src: ../services/home.prometheus/config/prometheus.yaml.jinja2
+      dest: home.prometheus/config/prometheus.yaml
+    notify: restart-prometheus
+
+  handlers:
+  - name: home.prometheus • docker-compose stop
+    docker_compose:
+      project_src: home.prometheus
+      stopped: true
+      state: present
+    listen: restart-prometheus
+  - name: home.prometheus • docker-compose up
+    docker_compose:
+      project_src: home.prometheus
+      state: present
+    listen: restart-prometheus

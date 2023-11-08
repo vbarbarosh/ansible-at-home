@@ -2,28 +2,27 @@
 - hosts: all
   tasks:
 
-# [DEPRECATION WARNING]: The connection's stdin object is deprecated. Call
-# display.prompt_until(msg) instead. This feature will be removed in version
-# 2.19. Deprecation warnings can be disabled by setting
-# deprecation_warnings=False in ansible.cfg.
-#  - name: Copy files/infra.promtail/
-#    synchronize:
-#      src: ../files/infra.promtail
-#      dest: .
-#      rsync_opts:
-#        - '--exclude=*.jinja2'
-
-  - name: infra.promtail • copy files/infra.promtail/
+  - name: infra.promtail • copy files
     copy:
-      src: ../files/infra.promtail
+      src: ../services/infra.promtail
       dest: .
+    notify: restart-promtail
 
   - name: infra.promtail • expand .jinja2 files
     template:
-      src: ../files/infra.promtail/config/promtail-config.yaml.jinja2
+      src: ../services/infra.promtail/config/promtail-config.yaml.jinja2
       dest: infra.promtail/config/promtail-config.yaml
+    notify: restart-promtail
 
-  - name: infra.promtail • spin up docker service
+  handlers:
+  - name: infra.promtail • docker-compose stop
+    docker_compose:
+      project_src: infra.promtail
+      stopped: true
+      state: present
+    listen: restart-promtail
+  - name: infra.promtail • docker-compose up
     docker_compose:
       project_src: infra.promtail
       state: present
+    listen: restart-promtail

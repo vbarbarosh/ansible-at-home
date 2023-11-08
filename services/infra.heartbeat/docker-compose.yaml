@@ -11,4 +11,4 @@ services:
       options:
         loki-url: http://home.grafana:3100/loki/api/v1/push
         loki-batch-size: '400'
-        loki-external-labels: 'job=docker,container_name={{.Name}},vb_service=infra.heartbeat'
+        loki-external-labels: 'job=docker,container_name={{.Name}},service=infra.heartbeat'
