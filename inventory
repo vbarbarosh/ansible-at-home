@@ -1,5 +1,5 @@
-home.grafana  ip4=192.168.100.12
-home.agent1   ip4=192.168.100.13
-home.agent2   ip4=192.168.100.14
-home.agent3   ip4=192.168.100.15
-home.agent4   ip4=192.168.100.17
+home.grafana  ip4=192.168.100.10
+home.agent1   ip4=192.168.100.11
+home.agent2   ip4=192.168.100.12
+home.agent3   ip4=192.168.100.13
+home.agent4   ip4=192.168.100.14
