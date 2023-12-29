@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: php8.1 • Install php8.1
+      apt:
+        name:
+          - php8.1
+        state: latest
+        update_cache: true
